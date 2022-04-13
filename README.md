@@ -17,7 +17,7 @@ samples, guidance on mobile development, and a full API reference.
 
 ### Views
 
-<img src="https://github.com/Mastersam07/click/raw/master/doc/shot.png" width="250"><img src="https://github.com/Mastersam07/click/raw/master/doc/shot.png" width="250">
+<img src="https://github.com/Mastersam07/click/raw/master/doc/shot.png" width="250">
 
 #### Credits
 https://github.com/Smiacter
