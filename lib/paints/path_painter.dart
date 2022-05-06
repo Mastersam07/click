@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:touchable/touchable.dart';
 
-const svgWidth = 1000;
-const svgHeight = 813;
-
 class PathPainter extends CustomPainter {
   final BuildContext context;
   final List<Path> paths;
   final Path curPath;
+  final double height;
+  final double width;
   final Function(Path curPath) onPressed;
-  PathPainter({
-    this.context,
-    this.paths,
-    this.curPath,
-    this.onPressed,
-  });
+  PathPainter(
+      {this.context,
+      this.paths,
+      this.curPath,
+      this.onPressed,
+      this.height,
+      this.width});
 
   @override
   void paint(Canvas canvas, Size size) {
     // calculate the scale factor, use the min value
-    final double xScale = size.width / svgWidth;
-    final double yScale = size.height / svgHeight;
+    final double xScale = size.width / width;
+    final double yScale = size.height / height;
     final double scale = xScale < yScale ? xScale : yScale;
 
     // scale each path to match canvas size
@@ -28,8 +28,8 @@ class PathPainter extends CustomPainter {
     matrix4.scale(scale, scale);
 
     // calculate the scaled svg image width and height in order to get right offset
-    double scaledSvgWidth = svgWidth * scale;
-    double scaledSvgHeight = svgHeight * scale;
+    double scaledSvgWidth = width * scale;
+    double scaledSvgHeight = height * scale;
     // calculate offset to center the svg image
     double offsetX = (size.width - scaledSvgWidth) / 2;
     double offsetY = (size.height - scaledSvgHeight) / 2;

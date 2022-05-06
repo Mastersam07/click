@@ -47,14 +47,46 @@ class SvgParser {
     });
   }
 
+  double width;
+  double height;
+  String viewbox;
+
+  double get svgWidth {
+    if (width != null) {
+      return width;
+    }
+    return double.tryParse(viewbox.split(" ")[2]);
+  }
+
+  double get svgHeight {
+    if (height != null) {
+      return height;
+    }
+    return double.tryParse(viewbox.split(" ")[3]);
+  }
+
   void loadFromString(String svgString) {
     _pathSegments.clear();
     int index = 0; //number of parsed path elements
     var doc = xml.XmlDocument.parse(svgString);
+
+    doc.findElements("svg").map((e) => e.attributes).forEach((node) {
+      var someH = node.firstWhere((attr) => attr.name.local == "height",
+          orElse: () => null);
+      height = double.tryParse(someH.value);
+      var someW = node.firstWhere((attr) => attr.name.local == "width",
+          orElse: () => null);
+      width = double.tryParse(someW.value);
+      var someViewBox = node.firstWhere((attr) => attr.name.local == "viewbox",
+          orElse: () => null);
+      viewbox = someViewBox.value;
+    });
+
     doc
         .findAllElements("path")
         .map((node) => node.attributes)
         .forEach((attributes) {
+      // print('attributes[0].name.local: ${attributes[0].name.local}');
       var dPath = attributes.firstWhere((attr) => attr.name.local == "d",
           orElse: () => null);
       if (dPath != null) {
