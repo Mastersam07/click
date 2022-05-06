@@ -36,6 +36,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final svgPath = "images/ng.svg";
   List<Path> paths = [];
   Path _selectedPath;
+  double heightSvg;
+  double widthSvg;
 
   @override
   void initState() {
@@ -66,6 +68,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       _selectedPath = curPath;
                     });
                   },
+                  height: heightSvg,
+                  width: widthSvg,
                 ),
               ),
             ),
@@ -80,6 +84,8 @@ class _MyHomePageState extends State<MyHomePage> {
     parser.loadFromFile(svgPath).then((value) {
       setState(() {
         paths = parser.getPaths();
+        heightSvg = parser.svgHeight;
+        widthSvg = parser.svgWidth;
       });
     });
   }
