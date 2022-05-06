@@ -1,5 +1,6 @@
 import 'package:click/parser/parser.dart';
 import 'package:flutter/material.dart';
+import 'package:touchable/touchable.dart';
 
 import 'paints/path_painter.dart';
 
@@ -32,13 +33,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<Path> _selectedPaths;
   final svgPath = "images/ng.svg";
   List<Path> paths = [];
+  Path _selectedPath;
+  double heightSvg;
+  double widthSvg;
 
   @override
   void initState() {
-    _selectedPaths = [];
     parseSvgToPath();
 
     super.initState();
@@ -49,60 +51,29 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(title: const Text("Vibes n Insha'allah")),
       body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width *
-                  0.5, // full screen here, you can change size to see different effect
-              height: MediaQuery.of(context).size.height * 0.5,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: CustomPaint(
-                  painter: PathPainter(
-                    context: context,
-                    paths: paths,
-                    selectedPath: _selectedPaths,
-                  ),
+        child: SizedBox(
+          width: double
+              .infinity, // full screen here, you can change size to see different effect
+          height: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: CanvasTouchDetector(
+              builder: (context) => CustomPaint(
+                painter: PathPainter(
+                  context: context,
+                  paths: paths,
+                  curPath: _selectedPath,
+                  onPressed: (curPath) {
+                    setState(() {
+                      _selectedPath = curPath;
+                    });
+                  },
+                  height: heightSvg,
+                  width: widthSvg,
                 ),
               ),
             ),
-            SizedBox(
-              height: 70,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedPaths.contains(paths[index])
-                              ? _selectedPaths.remove(paths[index])
-                              : _selectedPaths.add(paths[index]);
-                        });
-                      },
-                      child: Container(
-                          width: 40,
-                          height: 40,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: _selectedPaths.contains(paths[index])
-                                  ? Colors.green
-                                  : Colors.grey),
-                          child: Text(index.toString())),
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return const SizedBox(width: 8);
-                  },
-                  itemCount: paths.length,
-                ),
-              ),
-            )
-          ],
+          ),
         ),
       ),
     );
@@ -113,6 +84,8 @@ class _MyHomePageState extends State<MyHomePage> {
     parser.loadFromFile(svgPath).then((value) {
       setState(() {
         paths = parser.getPaths();
+        heightSvg = parser.svgHeight;
+        widthSvg = parser.svgWidth;
       });
     });
   }
